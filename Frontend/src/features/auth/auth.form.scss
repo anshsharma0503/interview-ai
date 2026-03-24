@@ -25,13 +25,19 @@ main{
         display: flex;
         flex-direction: column;
 
-        gap: 0.75rem;
+        gap: 0.5rem;
 
         input{
             border: none;
             outline: none;
             padding-inline: 1 rem;
+            padding-block: 0.75rem;
             border-radius: 075rem;
         }
+    }
+
+    a{
+        color: rgb(197, 26, 94);
+        text-decoration: none;
     }
 }
