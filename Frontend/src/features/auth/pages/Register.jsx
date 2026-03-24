@@ -1,18 +1,28 @@
 import React from 'react'
-import "../auth.form.scss"
+import {useNavigate, Link } from 'react-router-dom'
 
-const Login = () => {
+  
+
+const Register = () => {
+
+  const navigate = useNavigate()
 
   const handleSubmit = (e)=>{
     e.preventDefault()
+    navigate("/login")  
   }
-
+  
   return (
     <main>
       <div className="form-container">
-        <h1>Login</h1>
+        <h1>Register</h1>
 
         <form onSubmit={handleSubmit}>
+
+          <div className= "input-group">
+            <label htmlFor="username">Username</label>
+            <input type="text" id="username" name='username' placeholder='Enter username'/>
+          </div>
           <div className= "input-group">
             <label htmlFor="email">Email</label>
             <input type="email" id="email" name='email' placeholder='Enter email address'/>
@@ -22,13 +32,15 @@ const Login = () => {
             <input type="password" id="password" name='password' placeholder='Enter password'/>
           </div>
 
-          <button className='button primary-button' >Login</button>
+          <button className='button primary-button' >Register</button>
 
         </form>
+
+        <p>Already have an account? <Link to={"/login"}>login</Link></p>
 
       </div>
     </main>
   )
 }
 
-export default Login
+export default Register
