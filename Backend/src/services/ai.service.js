@@ -1,36 +1,73 @@
-const { GoogleGenAI } = require("@google/genai")
-const { z } = require("zod")
-const { zodToJsonSchema } = require("zod-to-json-schema")
+const { GoogleGenAI, Type } = require("@google/genai")
 
 const ai = new GoogleGenAI({
     apiKey: process.env.GOOGLE_GENAI_API_KEY
 })
 
-const interviewReportSchema = z.object({
-    jobDescription: z.string(),
-    resume: z.string(),
-    selfDescription: z.string(),
-    matchScore: z.number(),
-    technicalQuestions: z.array(z.object({
-        question: z.string().describe("The exact technical question to ask the candidate."),
-        intention: z.string().describe("Why you are asking this question and what signal you are looking for."),
-        answer: z.string().describe("A great example answer from the candidate.")
-    })).min(3).describe("A mandatory list of at least 3 technical questions. DO NOT leave this empty."),
-    behavioralQuestions: z.array(z.object({
-        question: z.string().describe("The exact behavioral question to ask."),
-        intention: z.string().describe("The core soft skill or trait being evaluated."),
-        answer: z.string().describe("A great STAR method example answer.")
-    })).min(2).describe("A mandatory list of at least 2 behavioral questions. DO NOT leave this empty."),
-    skillGaps: z.array(z.object({
-        skill: z.string().describe("The name of the missing skill."),
-        severity: z.enum(["low", "medium", "high"]).describe("How critical this missing skill is.")
-    })).describe("A list of missing skills. Provide at least one noticeable gap if any exist."),
-    preparationPlan: z.array(z.object({
-        day: z.number().describe("The day number, e.g., 1, 2, 3."),
-        focus: z.string().describe("The main topic to focus on for this day."),
-        tasks: z.array(z.string()).describe("List of concrete tasks to complete.")
-    })).min(3).describe("A mandatory 3-day minimum preparation plan schedule.")
-})  
+const interviewReportSchema = {
+    type: Type.OBJECT,
+    properties: {
+        jobDescription: { type: Type.STRING },
+        resume: { type: Type.STRING },
+        selfDescription: { type: Type.STRING },
+        matchScore: { type: Type.NUMBER },
+        technicalQuestions: {
+            type: Type.ARRAY,
+            description: "A list of technical questions.",
+            items: {
+                type: Type.OBJECT,
+                properties: {
+                    question: { type: Type.STRING, description: "The exact technical question to ask the candidate." },
+                    intention: { type: Type.STRING, description: "Why you are asking this question and what signal you are looking for." },
+                    answer: { type: Type.STRING, description: "A great example answer from the candidate." }
+                },
+                required: ["question", "intention", "answer"]
+            }
+        },
+        behavioralQuestions: {
+            type: Type.ARRAY,
+            description: "A list of behavioral questions.",
+            items: {
+                type: Type.OBJECT,
+                properties: {
+                    question: { type: Type.STRING, description: "The exact behavioral question to ask." },
+                    intention: { type: Type.STRING, description: "The core soft skill or trait being evaluated." },
+                    answer: { type: Type.STRING, description: "A great STAR method example answer." }
+                },
+                required: ["question", "intention", "answer"]
+            }
+        },
+        skillGaps: {
+            type: Type.ARRAY,
+            description: "A list of missing skills.",
+            items: {
+                type: Type.OBJECT,
+                properties: {
+                    skill: { type: Type.STRING, description: "The name of the missing skill." },
+                    severity: { type: Type.STRING, description: "Severity of the gap: low, medium, or high." }
+                },
+                required: ["skill", "severity"]
+            }
+        },
+        preparationPlan: {
+            type: Type.ARRAY,
+            description: "A day-by-day plan.",
+            items: {
+                type: Type.OBJECT,
+                properties: {
+                    day: { type: Type.NUMBER, description: "The day number, e.g., 1, 2, 3." },
+                    focus: { type: Type.STRING, description: "The main topic to focus on for this day." },
+                    tasks: {
+                        type: Type.ARRAY,
+                        items: { type: Type.STRING, description: "A task to complete." }
+                    }
+                },
+                required: ["day", "focus", "tasks"]
+            }
+        }
+    },
+    required: ["jobDescription", "resume", "selfDescription", "matchScore", "technicalQuestions", "behavioralQuestions", "skillGaps", "preparationPlan"]
+};
 
 async function generateInterviewReport({resume , selfDescription , jobDescription}) {
 
@@ -41,12 +78,8 @@ async function generateInterviewReport({resume , selfDescription , jobDescriptio
     Self Description: ${selfDescription}
     Job Description: ${jobDescription}
 
-    You MUST strictly provide the following in your JSON response:
-    1. matchScore: A number from 0 to 100 evaluating how well the resume matches the job description.
-    2. technicalQuestions: Generate exactly 5 technical questions based on the Job Description and the candidate's skills. Include the intention behind the question and how to answer it.
-    3. behavioralQuestions: Generate exactly 3 behavioral questions based on the candidate's self description and resume. Include the intention and how to answer.
-    4. skillGaps: Identify any missing skills required by the job but missing from the resume. Rate severity as low, medium, or high.
-    5. preparationPlan: Provide a day-by-day plan with specific focus areas and tasks to help them prepare for this specific interview.
+    You MUST strictly provide the JSON response matching the required schema schema. 
+    Ensure technicalQuestions and behavioralQuestions are an array of OBJECTS, each containing a 'question', 'intention', and 'answer'. Do NOT just return an array of strings.
     `   
 
     try {
@@ -55,7 +88,7 @@ async function generateInterviewReport({resume , selfDescription , jobDescriptio
             contents: prompt,
             config: {
                 responseMimeType: "application/json",
-                responseSchema: zodToJsonSchema(interviewReportSchema)
+                responseSchema: interviewReportSchema
             }
         });
 
@@ -68,7 +101,5 @@ async function generateInterviewReport({resume , selfDescription , jobDescriptio
         }
     }
 }   
-
-//invokeGeminiAi()
 
 module.exports = generateInterviewReport 
