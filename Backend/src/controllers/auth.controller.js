@@ -96,7 +96,7 @@ async function loginUserController(req, res) {
             username: user.username,
             email: user.email
         }
-    })
+    })  
 }
 
 

@@ -11,6 +11,15 @@ const NAV_ITEMS = [
     { id: 'roadmap', label: 'Road Map', icon: (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11" /></svg>) },
 ]
 
+const VERDICT_COLOR = {
+    'Strong Hire':      'verdict--strong-hire',
+    'Hire':             'verdict--hire',
+    'Leaning Hire':     'verdict--leaning-hire',
+    'Leaning No Hire':  'verdict--leaning-no-hire',
+    'No Hire':          'verdict--no-hire',
+    'Strong No Hire':   'verdict--strong-no-hire',
+}
+
 // ── Sub-components ────────────────────────────────────────────────────────────
 const QuestionCard = ({ item, index }) => {
     const [ open, setOpen ] = useState(false)
@@ -169,8 +178,45 @@ const Interview = () => {
                             <span className='match-score__value'>{report.matchScore}</span>
                             <span className='match-score__pct'>%</span>
                         </div>
-                        <p className='match-score__sub'>Strong match for this role</p>
+                        <p className='match-score__sub'>
+                            {report.matchScore >= 80 ? 'Strong match for this role' :
+                             report.matchScore >= 60 ? 'Moderate match for this role' :
+                             report.matchScore >= 40 ? 'Fair match for this role' :
+                                                       'Not a great match for this role'}
+                        </p>
                     </div>
+
+                    <div className='sidebar-divider' />
+
+                    {/* Hiring Verdict */}
+                    {report.hiringVerdict && (
+                        <div className='hiring-verdict'>
+                            <p className='hiring-verdict__label'>Hiring Verdict</p>
+                            <span className={`verdict-badge ${VERDICT_COLOR[report.hiringVerdict] || ''}`}>
+                                {report.hiringVerdict}
+                            </span>
+                            {report.scoreExplanation && (
+                                <p className='hiring-verdict__explanation'>{report.scoreExplanation}</p>
+                            )}
+                        </div>
+                    )}
+
+                    <div className='sidebar-divider' />
+
+                    {/* Strengths */}
+                    {report.strengths && report.strengths.length > 0 && (
+                        <div className='strengths'>
+                            <p className='strengths__label'>Strengths</p>
+                            <div className='strengths__list'>
+                                {report.strengths.map((s, i) => (
+                                    <div key={i} className='strength-item'>
+                                        <span className='strength-item__skill'>✦ {s.skill}</span>
+                                        <p className='strength-item__desc'>{s.description}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     <div className='sidebar-divider' />
 

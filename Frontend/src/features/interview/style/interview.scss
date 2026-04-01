@@ -477,3 +477,100 @@ $severity-low: #3fb950;
         border-color: rgba($severity-low, 0.25);
     }
 }
+
+// Hiring Verdict
+.hiring-verdict {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+
+    &__label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: $text-muted;
+        margin: 0;
+    }
+
+    &__explanation {
+        margin: 0;
+        font-size: 0.775rem;
+        color: lighten($text-muted, 10%);
+        line-height: 1.55;
+    }
+}
+
+.verdict-badge {
+    display: inline-block;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.3rem 0.75rem;
+    border-radius: 0.4rem;
+    border: 1px solid;
+    width: fit-content;
+
+    &--strong-hire    { color: #3fb950; background: rgba(#3fb950, 0.12); border-color: rgba(#3fb950, 0.3); }
+    &--hire           { color: #56d364; background: rgba(#56d364, 0.1);  border-color: rgba(#56d364, 0.25); }
+    &--leaning-hire   { color: #85e89d; background: rgba(#85e89d, 0.08); border-color: rgba(#85e89d, 0.2); }
+    &--leaning-no-hire{ color: #f5a623; background: rgba(#f5a623, 0.1);  border-color: rgba(#f5a623, 0.25); }
+    &--no-hire        { color: #ff6b6b; background: rgba(#ff6b6b, 0.1);  border-color: rgba(#ff6b6b, 0.25); }
+    &--strong-no-hire { color: #ff4d4d; background: rgba(#ff4d4d, 0.12); border-color: rgba(#ff4d4d, 0.3); }
+}
+
+// Strengths
+.strengths {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    &__label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: $text-muted;
+        margin: 0;
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+}
+
+.strength-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+
+    &__skill {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #a78bfa;
+    }
+
+    &__desc {
+        margin: 0;
+        font-size: 0.775rem;
+        color: lighten($text-muted, 10%);
+        line-height: 1.5;
+    }
+}
+
+// Loading Screen
+.loading-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 100vh;
+    background-color: $bg-page;
+    color: $text-muted;
+
+    h1 {
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+}

@@ -86,6 +86,19 @@ const skillGapSchema = new mongoose.Schema({
         _id: false
 })
 
+const strengthSchema = new mongoose.Schema({
+    skill: {
+        type: String,
+        required: [ true , "Skill is required" ]
+    },
+    description: {
+        type: String,
+        required: [ true , "Description is required" ]
+    }
+}, {
+    _id: false
+})
+
 const preparationPlanSchema = new mongoose.Schema({
     day:{
         type: Number,
@@ -124,7 +137,21 @@ const interviewReportSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "users"
-    }
+    },
+    title: {
+        type: String,
+        required: [ true, "Job title is required" ]
+    },
+    hiringVerdict: {
+        type: String,
+        enum: ["Strong Hire", "Hire", "Leaning Hire", "Leaning No Hire", "No Hire", "Strong No Hire"],
+        required: [ true, "Hiring verdict is required" ]
+    },
+    scoreExplanation: {
+        type: String,
+        required: [ true, "Score explanation is required" ]
+    },
+    strengths: [ strengthSchema ]
 } ,{
     timestamps: true
 })
