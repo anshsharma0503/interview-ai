@@ -14,8 +14,8 @@ authRouter.post("/register", authController.registerUserController)
 
 
 /**
- * @route POST /api/auth/register
- * @description Register a new user
+ * @route POST /api/auth/login
+ * @description login a user
  * @access Public
  */
 authRouter.post("/login",authController.loginUserController)

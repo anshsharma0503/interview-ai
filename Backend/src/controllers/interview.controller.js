@@ -22,7 +22,7 @@ async function generateInterviewReportController(req , res) {
             const result = await parser.getText();
             textContent = result.text;
             await parser.destroy();
-        }
+        } // extract text from resume
         const { jobDescription , selfDescription } = req.body
 
         const interViewReportByAi = await generateInterviewReport({
