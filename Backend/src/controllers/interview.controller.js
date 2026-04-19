@@ -117,17 +117,16 @@ async function generateResumePdfController(req, res) {
             return res.status(404).json({ message: "Interview report not found" })
         }
 
-        const pdfBuffer = await generateResumePdf({
+        const resumeHtml = await generateResumePdf({
             resume: interviewReport.resume,
             selfDescription: interviewReport.selfDescription,
             jobDescription: interviewReport.jobDescription
         })
 
-        res.set({
-            "Content-Type": "application/pdf",
-            "Content-Disposition": `attachment; filename="resume_${interviewReportId}.pdf"`
+        res.status(200).json({
+            message: "Resume HTML generated successfully",
+            html: resumeHtml
         })
-        res.send(pdfBuffer)
     } catch (error) {
         res.status(500).json({
             message: "Internal server error",

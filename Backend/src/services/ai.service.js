@@ -1,5 +1,4 @@
 const { GoogleGenAI, Type } = require("@google/genai")
-const puppeteer = require("puppeteer")
 
 const ai = new GoogleGenAI({
     apiKey: process.env.GOOGLE_GENAI_API_KEY
@@ -130,27 +129,7 @@ async function generateInterviewReport({resume , selfDescription , jobDescriptio
     }
 }
 
-async function generatePdfFromHtml(htmlContent) {
-    const browser = await puppeteer.launch({
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-    })
-    const page = await browser.newPage();
-    await page.setContent(htmlContent, { waitUntil: "networkidle0" })
 
-    const pdfBuffer = await page.pdf({
-        format: "A4", 
-        margin: {
-            top: "10mm",
-            bottom: "10mm",
-            left: "10mm",
-            right: "10mm"
-        }
-    })
-
-    await browser.close()
-
-    return pdfBuffer
-}
 
 async function generateResumePdf({ resume, selfDescription, jobDescription }) {
 
@@ -250,8 +229,7 @@ RULES:
     })
 
     const jsonContent = JSON.parse(response.text)
-    const pdfBuffer = await generatePdfFromHtml(jsonContent.html)
-    return pdfBuffer
+    return jsonContent.html
 }
 
 module.exports = { generateInterviewReport, generateResumePdf }
