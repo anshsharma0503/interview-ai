@@ -123,10 +123,16 @@ async function generateResumePdfController(req, res) {
             jobDescription: interviewReport.jobDescription
         })
 
-        res.status(200).json({
-            message: "Resume HTML generated successfully",
-            html: resumeHtml
-        })
+        const puppeteer = require("puppeteer")
+        const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] })
+        const page = await browser.newPage()
+        await page.setContent(resumeHtml, { waitUntil: 'networkidle0' })
+        const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true })
+        await browser.close()
+        
+        res.setHeader("Content-Type", "application/pdf")
+        res.setHeader("Content-Disposition", `attachment; filename=resume_${interviewReportId}.pdf`)
+        res.status(200).send(pdfBuffer)
     } catch (error) {
         res.status(500).json({
             message: "Internal server error",

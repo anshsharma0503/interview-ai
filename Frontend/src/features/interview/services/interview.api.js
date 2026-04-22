@@ -70,10 +70,12 @@ export const getAllInterviewReports = async () => {
  */
 export const generateResumePdf = async ({ interviewReportId }) => {
     try {
-        const response = await api.get(`/api/interview/${interviewReportId}/resume`)
+        const response = await api.get(`/api/interview/${interviewReportId}/resume`, {
+            responseType: "blob"
+        })
         return response.data
     } catch (error) {
-        console.error("Error fetching resume HTML:", error)
+        console.error("Error fetching resume PDF:", error)
         throw error
     }
 }

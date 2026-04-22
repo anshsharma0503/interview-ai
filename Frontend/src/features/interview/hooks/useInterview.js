@@ -1,9 +1,7 @@
 import { getAllInterviewReports, generateInterviewReport, getInterviewReportById, generateResumePdf } from "../services/interview.api"
-import html2pdf from "html2pdf.js"
 import { useContext, useEffect } from "react"
 import { InterviewContext } from "../interview.context"
 import { useParams } from "react-router"
-
 
 export const useInterview = () => {
 
@@ -61,33 +59,22 @@ export const useInterview = () => {
 
     const getResumePdf = async (interviewReportId) => {
         try {
-            const response = await generateResumePdf({ interviewReportId })
-            const htmlContent = response.html
-
-            // Create a temporary container to render the HTML
-            const container = document.createElement("div")
-            container.innerHTML = htmlContent
-            container.style.position = "absolute"
-            container.style.left = "-9999px"
-            document.body.appendChild(container)
-
-            // Convert HTML to PDF in the browser
-            await html2pdf()
-                .set({
-                    margin: 10,
-                    filename: `resume_${interviewReportId}.pdf`,
-                    image: { type: "jpeg", quality: 0.98 },
-                    html2canvas: { scale: 2 },
-                    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
-                })
-                .from(container)
-                .save()
-
+            const blob = await generateResumePdf({ interviewReportId })
+            
+            // Create a URL for the blob and trigger download
+            const url = window.URL.createObjectURL(new Blob([blob]))
+            const link = document.createElement('a')
+            link.href = url
+            link.setAttribute('download', `resume_${interviewReportId}.pdf`)
+            document.body.appendChild(link)
+            link.click()
+            
             // Clean up
-            document.body.removeChild(container)
+            link.parentNode.removeChild(link)
+            window.URL.revokeObjectURL(url)
         }
         catch (error) {
-            console.log(error)
+            console.log("Error downloading resume:", error)
         }
     }
 
